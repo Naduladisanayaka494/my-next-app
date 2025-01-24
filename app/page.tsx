@@ -29,10 +29,10 @@ const LoginPage: React.FC = () => {
 
       const data = await response.json();
 
-      // Save JWT token in localStorage (optional)
       localStorage.setItem("token", data.jwt);
+      
+      localStorage.setItem("role", data.userRole);
 
-      // Navigate based on role
       switch (data.userRole) {
         case "Admin":
           router.push("/admin-dashboard");
