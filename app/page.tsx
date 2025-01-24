@@ -14,6 +14,7 @@ const LoginPage: React.FC = () => {
         />
         <h1 className="text-2xl md:text-4xl font-bold mt-6 text-center">
           Welcome to BookWorld
+          
         </h1>
         <p className="mt-2 text-sm md:text-lg text-center">
           Discover, Learn, and Grow
