@@ -1,8 +1,53 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import Image from "next/image";
-import libraryImg from "../public/library.jpg"
+import libraryImg from "../public/library.jpg";
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter(); 
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid login credentials");
+      }
+
+      const data = await response.json();
+
+      // Save JWT token in localStorage (optional)
+      localStorage.setItem("token", data.jwt);
+
+      // Navigate based on role
+      switch (data.userRole) {
+        case "Admin":
+          router.push("/admin-dashboard");
+          break;
+        case "User":
+          router.push("/user-dashboard");
+          break;
+        default:
+          throw new Error("Unknown role");
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <div className="md:w-1/2 bg-gradient-to-r from-green-400 to-blue-600 flex flex-col justify-center items-center text-white p-6 md:p-12">
@@ -14,7 +59,6 @@ const LoginPage: React.FC = () => {
         />
         <h1 className="text-2xl md:text-4xl font-bold mt-6 text-center">
           Welcome to BookWorld
-          
         </h1>
         <p className="mt-2 text-sm md:text-lg text-center">
           Discover, Learn, and Grow
@@ -26,7 +70,8 @@ const LoginPage: React.FC = () => {
           <h2 className="text-xl md:text-2xl font-bold text-center mb-6">
             Login
           </h2>
-          <form>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          <form onSubmit={handleLogin}>
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -37,8 +82,11 @@ const LoginPage: React.FC = () => {
               <input
                 type="email"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
+                required
               />
             </div>
             <div className="mb-4">
@@ -51,8 +99,11 @@ const LoginPage: React.FC = () => {
               <input
                 type="password"
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your password"
+                required
               />
             </div>
             <button
