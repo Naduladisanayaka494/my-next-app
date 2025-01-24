@@ -24,10 +24,9 @@ const AdminDashboard: React.FC = () => {
         </button>
       </nav>
 
-      {/* Main Content */}
+
       <div className="p-6">
         <p>Welcome to the Admin Dashboard! Manage your app here.</p>
-        {/* Add dashboard features like user management, reports, etc. */}
       </div>
     </div>
   );
